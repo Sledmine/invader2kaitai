@@ -17,9 +17,10 @@ local defName = defFileName:match("^(.+)%..+$")
 local kataiYml = {
     meta = {
         id = defName,
-        endian = "be"
+        endian = "be",
+        imports = {"tag_header"}
     },
-    seq = {},
+    seq = {{id = "header", type = "tag_header"}},
     enums = {}
 }
 
@@ -55,14 +56,18 @@ local savedAsJson = glue.writefile("src/defs/" .. defFileName, json.encode(katai
 if savedAsJson then
     print("- Saved as JSON")
 end
-local convertedToYml = os.execute("cat src/defs/" .. defFileName .. " | yq -P > src/defs/" .. defName .. ".yml")
+local convertedToYml = os.execute("cat src/defs/" .. defFileName .. " | yq -P > src/defs/" .. defName .. ".ksy")
 if convertedToYml then
-    print("- Converted to YML")
+    print("- JSON to KSY")
     os.remove("src/defs/" .. defFileName)
 end
-local kaitaiToLua = os.execute("ksc -t lua src/defs/" .. defName .. ".yml")
+local kaitaiToLua = os.execute("ksc -t lua --outdir src/lua/tags src/defs/" .. defName .. ".ksy")
 if kaitaiToLua then
     print("- Converted to Lua")
+end
+local kaitaiToCpp = os.execute("ksc -t cpp_stl --outdir src/cpp/tags src/defs/" .. defName .. ".ksy")
+if kaitaiToCpp then
+    print("- Converted to C++")
 end
 
 print("Done")
