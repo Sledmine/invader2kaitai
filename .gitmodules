@@ -1,0 +1,3 @@
+[submodule "invader"]
+	path = invader
+	url = https://github.com/SnowyMouse/invader
