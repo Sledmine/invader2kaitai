@@ -28,6 +28,17 @@ function convert.normalToSnakeCase(str)
     end
 end
 
+function convert.snakeCaseToCamelCase(str)
+    if str then
+        -- convert snake_case to camelCase
+        local new = str:gsub("_([a-z])", function(c)
+            return c:upper()
+        end)
+        -- capitalize first letter
+        new = new:sub(1, 1):upper() .. new:sub(2)
+        return new
+    end
+end
 
 -- From Invader
 local TAG_FOURCC = {
