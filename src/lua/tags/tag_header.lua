@@ -28,7 +28,6 @@ function TagHeader:_read()
   if not(self.engine == "\098\108\097\109") then
     error("not equal, expected " ..  "\098\108\097\109" .. ", but got " .. self.engine)
   end
-  self.version_for_tag = self._io:read_u2be()
 end
 
 
