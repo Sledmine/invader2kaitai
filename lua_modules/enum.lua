@@ -27,7 +27,7 @@ function enum.Enum(t)
                     return v
                 end
             end
-
+            error("Invalid enum value: " .. tostring(value))
             return nil
         end,
 
