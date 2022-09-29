@@ -20,5 +20,5 @@ seq:
     type: u2
   - id: engine
     contents: blam
-  - id: version_for_tag
-    type: u2
+  #- id: version_for_tag
+  #  type: u2
