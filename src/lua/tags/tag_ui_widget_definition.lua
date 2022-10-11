@@ -391,8 +391,8 @@ function TagUiWidgetDefinition.Point2DInt:_init(io, parent, root)
 end
 
 function TagUiWidgetDefinition.Point2DInt:_read()
-  self.x = self._io:read_s4be()
-  self.y = self._io:read_s4be()
+  self.x = self._io:read_s2be()
+  self.y = self._io:read_s2be()
 end
 
 
@@ -559,7 +559,7 @@ function TagUiWidgetDefinition.TagDependency:_init(io, parent, root)
 end
 
 function TagUiWidgetDefinition.TagDependency:_read()
-  self.class = self._io:read_u4be()
+  self.tag_fourcc = self._io:read_u4be()
   self.path_pointer = self._io:read_u4be()
   self.path_size = self._io:read_u4be()
   self.tag_id = self._io:read_u4be()

@@ -236,4 +236,73 @@ function convert.tag_version(tag_class)
     return 1
 end
 
+local primitiveTypes = {
+    byte = "std::byte",
+    u1 = "std::uint8_t",
+    u2 = "std::uint16_t",
+    u4 = "std::uint32_t",
+    u8 = "std::uint64_t",
+    s1 = "std::int8_t",
+    s2 = "std::int16_t",
+    s4 = "std::int32_t",
+    s8 = "std::int64_t",
+    f4 = "float",
+    f8 = "double",
+    str = "char",
+    -- Careful with this we might need to remove them in order to use a custom type
+    b8 = "std::int8_t",
+    b16 = "std::int16_t",
+    b32 = "std::int32_t",
+}
+
+function convert.toCStruct(structName, structElements, members)
+    local struct = [[
+#include <cstdint>
+#include "types.hpp"
+
+namespace Balltze::Engine::TagDefinitions { 
+]]
+    local function add(text)
+        struct = struct .. text
+    end
+    local function ident(n)
+        add(string.rep("\t", n))
+    end
+    
+    for structIndex, struct in pairs(structElements) do
+        ident(1)
+        add("struct " .. convert.snakeCaseToCamelCase(struct.name) .. " {\n")
+        for sequenceIndex, element in ipairs(struct.fields) do
+            ident(2)
+            if element.name then
+                local type = element.type
+                if primitiveTypes[type] then
+                    type = primitiveTypes[type]
+                elseif type then
+                    type = convert.snakeCaseToCamelCase(type)
+                end
+                if type then
+                    if type == "TagReflexive" then
+                        add(type .. "<" .. element.struct .. "> " .. element.name .. ";\n")
+                    else
+                        if element.size then
+                            add(type .. " " .. element.name .. "[" .. element.size .. "];\n")
+                        else
+                            add(type .. " " .. element.name .. ";\n")
+                        end
+                    end
+                else
+                    add("std::byte " .. element.name .. "[" .. element.size .. "];\n")
+                end
+            else
+                add("std::byte pad_" .. sequenceIndex  .. "[" .. element.size .. "];\n")
+            end
+        end
+        ident(1)
+        add("};\n")
+    end
+    add("}\n")
+    glue.writefile("src/include/" .. structName .. ".hpp", struct, "t")
+end
+
 return convert

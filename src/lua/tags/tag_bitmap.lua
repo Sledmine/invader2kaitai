@@ -122,8 +122,8 @@ function TagBitmap.Point2DInt:_init(io, parent, root)
 end
 
 function TagBitmap.Point2DInt:_read()
-  self.x = self._io:read_s4be()
-  self.y = self._io:read_s4be()
+  self.x = self._io:read_s2be()
+  self.y = self._io:read_s2be()
 end
 
 
@@ -185,7 +185,7 @@ function TagBitmap.BitmapData:_init(io, parent, root)
 end
 
 function TagBitmap.BitmapData:_read()
-  self.class = str_decode.decode(self._io:read_bytes(4), "ASCII")
+  self.tag_fourcc = str_decode.decode(self._io:read_bytes(4), "ASCII")
   self.width = self._io:read_u2be()
   self.height = self._io:read_u2be()
   self.depth = self._io:read_u2be()
@@ -231,7 +231,7 @@ function TagBitmap.TagDependency:_init(io, parent, root)
 end
 
 function TagBitmap.TagDependency:_read()
-  self.class = self._io:read_u4be()
+  self.tag_fourcc = self._io:read_u4be()
   self.path_pointer = self._io:read_u4be()
   self.path_size = self._io:read_u4be()
   self.tag_id = self._io:read_u4be()
